@@ -1,0 +1,49 @@
+{
+  "name": "west-african-tours",
+  "version": "1.1.7",
+  "homepage": "/",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/user-event": "^7.2.1",
+    "axios": "^1.2.0",
+    "bootstrap": "^4.6.2",
+    "force": "^0.0.3",
+    "google-maps-react": "^2.0.2",
+    "html-react-parser": "^0.10.5",
+    "node": "^19.6.0",
+    "owl.carousel": "^2.3.4",
+    "react": "^16.12.0",
+    "react-bootstrap": "^2.7.2",
+    "react-bootstrap4-modal": "^2.0.0",
+    "react-dom": "^16.12.0",
+    "react-hot-toast": "^2.4.0",
+    "react-icons": "^4.6.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.0",
+    "reactstrap": "^8.9.0",
+    "wowjs": "^1.1.3"
+  },
+  "scripts": {
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts --openssl-legacy-provider build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
