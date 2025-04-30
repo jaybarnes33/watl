@@ -504,10 +504,10 @@ const SpecialExcursion = () => {
     return (
       <div className="gambia-birding-tours">
         <div className="one-week-tour mb-5">
-          <h2>{gambiaBirdingTours.oneWeek.title}</h2>
+          <h3>{gambiaBirdingTours.oneWeek.title}</h3>
           {gambiaBirdingTours.oneWeek.days.map((day) => (
             <div key={day.day} className="day-schedule mb-4">
-              <h3>Day {day.day}</h3>
+              <h4>Day {day.day}</h4>
               <ul className="list-unstyled">
                 {day.activities.map((activity, index) => (
                   <li key={index} className="mb-2">
@@ -519,10 +519,10 @@ const SpecialExcursion = () => {
           ))}
         </div>
         <div className="two-week-tour">
-          <h2>{gambiaBirdingTours.twoWeek.title}</h2>
+          <h3>{gambiaBirdingTours.twoWeek.title}</h3>
           {gambiaBirdingTours.twoWeek.days.map((day) => (
             <div key={day.day} className="day-schedule mb-4">
-              <h3>Day {day.day}</h3>
+              <h4>Day {day.day}</h4>
               <ul className="list-unstyled">
                 {day.activities.map((activity, index) => (
                   <li key={index} className="mb-2">

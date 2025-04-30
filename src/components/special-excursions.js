@@ -46,10 +46,11 @@ const SpecialExursions = () => {
       <div className="special-excursions-container">
         <div className="special-excursions-list">
           {specialExcursions.map((excursion) => (
-            <Link to={`/special-excursions/${excursion.title}`}>
-              <div key={excursion.id} className="special-excursion-item">
-                <h2>{excursion.title}</h2>
-              </div>
+            <Link
+              className="special-excursion-item"
+              to={`/special-excursions/${excursion.title}`}
+            >
+              <h2>{excursion.title}</h2>
             </Link>
           ))}
         </div>

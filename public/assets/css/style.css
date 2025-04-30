@@ -7888,14 +7888,24 @@ ul.wp-block-latest-posts.is-grid.alignwide {
   place-items: center;
 }
 
+@media (max-width: 768px) {
+  .special-excursions-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.special-excursion-item {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--main-color-one);
+}
+
 .special-excursion-item h2 {
   height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  border: 1px solid var(--main-color-one);
-  width: 210px;
+
   font-size: 20px;
 }
 
