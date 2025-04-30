@@ -144,6 +144,14 @@ const CRUISE_SERVICES = {
   partners: ["Travel Dynamics", "Seven Seas", "Holland America"],
 };
 
+const RELIGIOUS_SERVICES = {
+  title: "Religious Groups",
+  description:
+    "At West African Tours, we can coordinate travel arrangements to get to The Gambia, Senegal, Ghana, Togo, Benin and Mali. For conference type gatherings we can assist with booking of venues and include conference materials. We can also transport around the various countries to different church meeting venues, provide in and out transfers and for leisure add appropriate tours to round off the whole experience for added value.",
+
+  images: ["/assets/img/religious-groups.jpg"],
+};
+
 const BIRDING_EXCURSIONS = [
   {
     countryName: "Senegal",
@@ -181,6 +189,45 @@ const WILDLIFE_EXCURSIONS = [
 ];
 
 const NATURE_SERVICES = [...BIRDING_EXCURSIONS, ...WILDLIFE_EXCURSIONS];
+
+const ECO_TOURISM_EXCURSIONS = [
+  {
+    countryName: "Introduction",
+    title: "Eco Tourism in West Africa",
+    description:
+      "West African Tours makes great efforts to include tourism projects in our tours, which operate in line with our vision. We believe tourism should be organized in harmony with nature and local communities. We are guided by the notion that local people should be enabled to generate income from tourism to alleviate their poverty levels, alongside the preservation of our delicate natural resources and endangered animal species should be ensured and encouraged.",
+  },
+  {
+    countryName: "The Travel Foundation",
+    title: "The Travel Foundation",
+    description:
+      "The foundation was set up to assist unofficial guides, craftsmen, fruit sellers, stallholders & local taxi drivers, to sell their products & services to holiday-makers and to better engage in the wider tourism industry. It is part of a Responsible Tourism Partnership bringing together UK tour operators, ground tour operators, hoteliers & tourism bodies & these suppliers.",
+  },
+  {
+    countryName: "Ecotourism Hotspots",
+    title: "Ecotourism Hotspots",
+    description:
+      "Our experienced meeting and event planners are there to help you to stay productive. In a fully equipped meeting space with the latest audiovisual technologies, five multi-functional break-out rooms and an elegant ballroom with the capacity to cater for events up to 600 guests are just one of the options we can offer.",
+  },
+  {
+    countryName: "The Gambia",
+    title: "Eco Tourism in The Gambia",
+    description:
+      "In The Gambia Tumani Tenda Camp a community evolved which is described as a religious community embracing certain values, notably a sustainable attitude to the natural environment, a socially responsible style of living, respect for the elderly, independence, self-sustainability and a sense of community. Farming, local cooking lessons canoe trips, tree planning are just some of the earth friendly activities offered",
+  },
+  {
+    countryName: "Ghana",
+    title: "Eco Tourism in Ghana",
+    description:
+      "Mole and Kakum National Parks and the Assin Attandanso Resource Reserve are but two of many eco tourist attractions in Ghana. But, from opposite ends of the country, they beckon you to explore their lands, to contribute to the growth of sustainable economy and environment, and to leave having something to write home about.",
+  },
+  {
+    countryName: "Benin",
+    title: "Eco Tourism in Benin",
+    description:
+      "The pleasant Tobe Forest is protected privately, by Alain Ratie and his collaborators. It aims to conserve natural resources based on local traditions and at local development through honey production, ecotourism and other income generating activities.",
+  },
+];
 
 const gambiaBirdingTours = {
   oneWeek: {
@@ -426,7 +473,10 @@ const SpecialExcursion = () => {
         return NATURE_SERVICES;
       case "cruises":
         return CRUISE_SERVICES;
-
+      case "eco tourism":
+        return ECO_TOURISM_EXCURSIONS;
+      case "religious groups":
+        return RELIGIOUS_SERVICES;
       default:
         return null;
     }
@@ -491,20 +541,42 @@ const SpecialExcursion = () => {
 
     // Special handling for Gambia birding tours
 
-    // Special handling for cruise services
-    if (id.toLowerCase() === "cruises") {
+    // Special handling for cruise services and religious services
+    if (
+      id.toLowerCase() === "cruises" ||
+      id.toLowerCase() === "religious groups"
+    ) {
       return (
-        <div className="cruise-services my-4">
+        <div className="services-content my-4">
           <h3>{excursions.title}</h3>
           <p>{excursions.description}</p>
-          <div className="partners mt-4">
-            <h4>Our Partners</h4>
-            <ul className="list-unstyled">
-              {excursions.partners.map((partner, index) => (
-                <li key={index}>{partner}</li>
-              ))}
-            </ul>
-          </div>
+          {excursions?.partners?.length > 0 && (
+            <div className="partners mt-4">
+              <h4>Our Partners</h4>
+              <ul className="list-unstyled">
+                {excursions?.partners?.map((partner, index) => (
+                  <li key={index}>{partner}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {excursions?.images?.length > 0 && (
+            <div className="images-section mt-4">
+              <h4>Gallery</h4>
+              <div className="row">
+                {excursions.images.map((image, index) => (
+                  <div key={index} className="col-md-6 mb-3">
+                    <img
+                      src={image}
+                      alt={image}
+                      className="img-fluid rounded"
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       );
     }

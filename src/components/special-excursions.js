@@ -34,7 +34,7 @@ const SpecialExursions = () => {
     },
     {
       id: 8,
-      title: "Bird Watching",
+      title: "Religious Groups",
     },
   ];
 
