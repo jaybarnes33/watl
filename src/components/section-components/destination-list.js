@@ -80,7 +80,7 @@ const DestinationList = () => {
                         <div className="mt-auto">
                           <Link
                             className="btn btn-gray"
-                            to={{ pathname: "/destination-details", state: x }}
+                            to={`/destination-details/${x?.id}`}
                           >
                             <span>
                               Explore

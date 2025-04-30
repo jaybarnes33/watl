@@ -1,11 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import {
-  BrowserRouter as Router,
-  HashRouter,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import HomeV1 from "./components/home-v1";
 
 import AboutUs from "./components/about";
@@ -33,15 +28,17 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import { SuggestProvider } from "./components/SuggestProvider";
 import { LoaderProvider } from "./components/LoaderProvider";
 import Transfer from "./components/transfer";
-import Cart from "./components/section-components/cart";
+
 import { CartProvider } from "./components/CartProvider";
 import { CartCounterProvider } from "./components/CartCounterProvider";
 import CartCustom from "./components/cart-custom";
+import SpecialExursions from "./components/special-excursions";
+import SpecialExcursion from "./components/special-excursion";
 
 class Root extends Component {
   render() {
     return (
-      <HashRouter basename="/">
+      <BrowserRouter basename="/">
         <SuggestProvider>
           <LoaderProvider>
             <CartCounterProvider>
@@ -66,7 +63,7 @@ class Root extends Component {
                       component={DestinationLIstV2}
                     />
                     <Route
-                      path="/destination-details"
+                      path="/destination-details/:id"
                       component={DestinationDetails}
                     />
                     {/* <Route path='/gallery' component={Gallery} /> */}
@@ -83,6 +80,14 @@ class Root extends Component {
                     <Route path="/login" component={Login} />
                     <Route path="/signup" component={Signup} />
                     <Route path="/cart" component={CartCustom} />
+                    <Route
+                      path="/special-excursions/:id"
+                      component={SpecialExcursion}
+                    />
+                    <Route
+                      path="/special-excursions/"
+                      component={SpecialExursions}
+                    />
 
                     {/* <Route patch= */}
                     {/* <Route path='/tour-details/:id' children={<TourDetails />} /> */}
@@ -92,7 +97,7 @@ class Root extends Component {
             </CartCounterProvider>
           </LoaderProvider>
         </SuggestProvider>
-      </HashRouter>
+      </BrowserRouter>
     );
   }
 }
