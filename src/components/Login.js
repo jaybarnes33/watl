@@ -11,7 +11,7 @@ import AuthWrapper from "./AuthWrapper";
 const Login = () => {
   let history = useHistory();
   const [loginDetails, setLoginDetails] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [isValid, setIsValid] = useState(true);
@@ -77,11 +77,11 @@ const Login = () => {
                   <input
                     type="email"
                     placeholder="Email Address"
-                    value={loginDetails.username}
+                    value={loginDetails.email}
                     onChange={(e) =>
                       setLoginDetails({
                         ...loginDetails,
-                        username: e.target.value,
+                        email: e.target.value,
                       })
                     }
                   />

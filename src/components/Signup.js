@@ -10,7 +10,7 @@ const Signup = () => {
   let history = useHistory();
   const [loading, setIsLoading] = useState(false);
   const [signupDetails, setsignupDetails] = useState({
-    username: "",
+    email: "",
     firstName: "",
     lastName: "",
     password: "",
@@ -35,7 +35,7 @@ const Signup = () => {
           toast.success("Account Created Succesfully");
         } else {
           setIsLoading(false);
-          toast.error("Username already exist");
+          toast.error("Email already exist");
         }
       })
       .catch((err) => {
@@ -63,11 +63,11 @@ const Signup = () => {
                   <input
                     type="email"
                     placeholder="Enter name"
-                    value={signupDetails.username}
+                    value={signupDetails.email}
                     onChange={(e) =>
                       setsignupDetails({
                         ...signupDetails,
-                        username: e.target.value,
+                        email: e.target.value,
                       })
                     }
                   />
