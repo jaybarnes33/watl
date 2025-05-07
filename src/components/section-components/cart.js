@@ -6,7 +6,7 @@ import useLoader from "../useLoader";
 import { Row } from "react-bootstrap";
 import ExcursionItem from "./ExcursionItem";
 import { BaseAPIURL } from "../../API/base";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useHistory } from "react-router-dom";
 
 const Cart = () => {
@@ -77,7 +77,6 @@ const Cart = () => {
 
   return (
     <div className="tour-list-area pd-top-120 viaje-go-top">
-      <Toaster position="top-center" reverseOrder={false} />
       <div className="container">
         <div className="row">
           <div className="col-xl-12 col-lg-12 order-lg-12">

@@ -34,11 +34,13 @@ import { CartCounterProvider } from "./components/CartCounterProvider";
 import CartCustom from "./components/cart-custom";
 import SpecialExursions from "./components/special-excursions";
 import SpecialExcursion from "./components/special-excursion";
+import { Toaster } from "react-hot-toast";
 
 class Root extends Component {
   render() {
     return (
       <BrowserRouter basename="/">
+        <Toaster position="top-center" reverseOrder={false} />
         <SuggestProvider>
           <LoaderProvider>
             <CartCounterProvider>

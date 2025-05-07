@@ -5,6 +5,9 @@ import { BaseAPIURL, IMG_URL } from "../../API/base";
 import Loader from "../global-components/loader";
 import { useParams } from "react-router-dom";
 import DestinationList from "./destination-list";
+import { getDuration } from "../../utils/getDuration";
+import Stars from "../global-components/Stars";
+import toast, { Toaster } from "react-hot-toast";
 
 const DestinatioDetails = () => {
   const { id } = useParams();
@@ -12,42 +15,20 @@ const DestinatioDetails = () => {
   const [capital, setCapital] = useState("Banjul");
   const [destinationPackages, setDestinationPackages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
-
-  const { state } = location;
+  const [rating, setRating] = useState(0);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [reviewForm, setReviewForm] = useState({
+    reviewForId: "",
+    message: "",
+    name: "",
+    email: "",
+    rating: 0,
+  });
 
   const getDestinationDetails = (id) => {
     fetch(`${BaseAPIURL}destination/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        // if(data.data.name == "Senegal"){
-        //   setCapital("Dakar")
-        // }
-        // if(data.data.name == "Ghana"){
-        //   setCapital("Accra")
-        // }
-        // if(data.data.name == "Gambia"){
-        //   setCapital("Banjul")
-        // }
-        // if(data.data.name.includes("Ivory")){
-        //   setCapital("Yamoussoukro")
-        // }
-        // if(data.data.name == "Nigeria"){
-        //   setCapital("Abuja")
-        // }
-        // if(data.data.name == "Togo"){
-        //   setCapital("Lome")
-        // }
-
-        // if(data.data.name == "Guniea Bissau"){
-        //   setCapital("Bissau")
-        // }
-        // if(data.data.name == "Guniea"){
-        //   setCapital("Conakry")
-        // }
-        // if(data.data.name.includes("Leone")){
-        //   setCapital("Freetown")
-        // }
         setDestinationDetailsData(data.data);
 
         setIsLoading(false);
@@ -66,9 +47,56 @@ const DestinatioDetails = () => {
   useEffect(() => {
     getDestinationDetails(id);
     fetchToursByDestination(id.toString());
+    // Prefill form if user is logged in
+    const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+    if (userInfo) {
+      setReviewForm((prev) => ({
+        ...prev,
+        name: userInfo.name,
+        email: userInfo.email,
+      }));
+    }
   }, []);
 
   let publicUrl = process.env.PUBLIC_URL + "/";
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = sessionStorage.getItem("wat_token");
+      const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+
+      const response = await fetch(`${BaseAPIURL}review/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({
+          ...reviewForm,
+          reviewForId: id,
+          rating: rating,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Review created successfully!");
+        setReviewForm({
+          reviewForId: "",
+          message: "",
+          name: "",
+          email: "",
+          rating: 0,
+        });
+        setRating(0);
+      } else {
+        toast.error("Failed to create review");
+      }
+    } catch (error) {
+      console.error("Error creating review:", error);
+      toast.error("Failed to create review");
+    }
+  };
 
   return (
     <div>
@@ -190,17 +218,11 @@ const DestinatioDetails = () => {
                                 {"On Request"}
                               </li>
                               <li>
-                                <i className="fa fa-clock-o" /> {item?.duration}{" "}
-                                {item?.duration > 1 ? "days" : "day"}
+                                <i className="fa fa-clock-o" />
+                                {getDuration(item?.duration)}
                               </li>
                               <li>
-                                <i className="fa fa-star" />
-                                <i className="fa fa-star" />
-                                <i className="fa fa-star" />
-                                <i className="fa fa-star" />
-                                <i className="fa fa-star" />{" "}
-                                {/* {Number(item?.rating).toFixed(1)} */}
-                                {5}
+                                <Stars rating={item?.rating} />
                               </li>
                             </ul>
                             <ul className="tp-list-meta border-bt-dot">
@@ -215,9 +237,13 @@ const DestinatioDetails = () => {
                             </ul>
                             <div className="tp-price-meta tp-price-meta-cl">
                               <p>Price</p>
-                              <h2>
-                                {item?.price} <small>{item.currency}</small>
-                              </h2>
+                              {item?.price > 0 ? (
+                                <h2>
+                                  {item.currency} {item.price}
+                                </h2>
+                              ) : (
+                                <span className="text-danger">On Request</span>
+                              )}
                               <del>
                                 {/* {item?.price + 20} */}
                                 <span>$</span>
@@ -319,10 +345,13 @@ const DestinatioDetails = () => {
           </div>
           {/* location-details end */}
           {/* location-review-area start */}
-          <div className="location-review-area">
+          <div className="location-review-area mb-5">
             <div className="row">
               <div className="col-lg-8">
-                <form className="tp-form-wrap bg-gray tp-form-wrap-one">
+                <form
+                  className="tp-form-wrap bg-gray tp-form-wrap-one"
+                  onSubmit={handleReviewSubmit}
+                >
                   <div className="row">
                     <div className="col-md-6">
                       <h4 className="single-page-small-title">
@@ -331,39 +360,85 @@ const DestinatioDetails = () => {
                     </div>
                     <div className="col-md-6">
                       <div className="tp-review-meta text-lg-right">
-                        <span className="ml-0">Assigned Rating</span>
-                        <i className="fa fa-star" />
-                        <i className="fa fa-star" />
-                        <i className="fa fa-star" />
-                        <i className="fa fa-star" />
-                        <i className="fa fa-star" />
+                        <span className="ml-0">Your Rating</span>
+                        <div className="star-rating">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <span
+                              key={star}
+                              className="star"
+                              style={{
+                                cursor: "pointer",
+                                fontSize: "20px",
+                                color:
+                                  star <= (hoveredRating || rating)
+                                    ? "#ffc107"
+                                    : "#e4e5e9",
+                                marginRight: "5px",
+                              }}
+                              onClick={() => setRating(star)}
+                              onMouseEnter={() => setHoveredRating(star)}
+                              onMouseLeave={() => setHoveredRating(0)}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                     <div className="col-md-6">
                       <label className="single-input-wrap">
                         <span className="single-input-title">Name</span>
-                        <input type="text" />
+                        <input
+                          type="text"
+                          value={reviewForm.name}
+                          onChange={(e) =>
+                            setReviewForm({
+                              ...reviewForm,
+                              name: e.target.value,
+                            })
+                          }
+                          required
+                        />
                       </label>
                     </div>
                     <div className="col-md-6">
                       <label className="single-input-wrap">
                         <span className="single-input-title">Email</span>
-                        <input type="text" />
+                        <input
+                          type="email"
+                          value={reviewForm.email}
+                          onChange={(e) =>
+                            setReviewForm({
+                              ...reviewForm,
+                              email: e.target.value,
+                            })
+                          }
+                          required
+                        />
                       </label>
                     </div>
                     <div className="col-lg-12">
                       <label className="single-input-wrap">
-                        <span className="single-input-title">comments</span>
-                        <textarea defaultValue={""} />
+                        <span className="single-input-title">Comments</span>
+                        <textarea
+                          value={reviewForm.message}
+                          onChange={(e) =>
+                            setReviewForm({
+                              ...reviewForm,
+                              message: e.target.value,
+                            })
+                          }
+                          required
+                        />
                       </label>
                     </div>
                     <div className="col-12">
-                      <a className="btn btn-blue" href="#">
-                        + Add Photo
-                      </a>
-                      <a className="btn btn-yellow float-right" href="#">
-                        Send
-                      </a>
+                      <button
+                        type="submit"
+                        className="btn btn-yellow float-right"
+                      >
+                        Submit Review
+                      </button>
                     </div>
                   </div>
                 </form>
@@ -378,7 +453,7 @@ const DestinatioDetails = () => {
               </div>
             </div>
           </div>
-          {/* location-review-area start */}
+          {/* location-review-area end */}
         </div>
       </div>
       {isLoading ? (

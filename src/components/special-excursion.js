@@ -591,7 +591,7 @@ const SpecialExcursion = () => {
             {id.toLowerCase() === "students" && (
               <Link
                 className="btn btn-warning"
-                to={`/special-excursions/country/${item.countryName}`}
+                to={`/destination-details/${item.excursions[0].destinationId}`}
               >
                 Learn more about {item.countryName} &rarr;
               </Link>
