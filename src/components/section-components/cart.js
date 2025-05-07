@@ -1,169 +1,127 @@
-import React, { Component } from 'react'
-import useCart from '../useCart'
-import useCartCounter from '../useCartCounter'
-
-import { Link } from 'react-router-dom'
-import parse from 'html-react-parser'
-import { useState } from 'react'
-import { useEffect } from 'react'
-import Loader from '../../components/global-components/loader'
-import Stars from '../global-components/Stars'
-import { BaseAPIURL, IMG_URL } from '../../API/base'
-import useSuggest from '../useSuggest'
-import useLoader from '../useLoader'
-import { Row } from 'react-bootstrap'
+import React from "react";
+import useCart from "../useCart";
+import { useEffect, useState } from "react";
+import Loader from "../../components/global-components/loader";
+import useLoader from "../useLoader";
+import { Row } from "react-bootstrap";
+import ExcursionItem from "./ExcursionItem";
+import { BaseAPIURL } from "../../API/base";
+import toast, { Toaster } from "react-hot-toast";
+import { useHistory } from "react-router-dom";
 
 const Cart = () => {
-  const {cartData, setCartData}= useCart()
-  const {cartCount, setCartCount}= useCartCounter()
-  let publicUrl = process.env.PUBLIC_URL + '/'
-  let imagealt = 'image'
+  const { cartData, removeFromCart } = useCart();
+  const { loading, setLoading } = useLoader();
+  const history = useHistory();
+  const [totalPrice, setTotalPrice] = useState(0);
 
-  const [tourPackages, setTourPackages] = useState([])
-  const [show, setShow]=useState(false)
+  const handleRemove = (item) => {
+    removeFromCart(item);
+  };
 
-  const {loading, setLoading}=useLoader()
+  useEffect(() => {
+    setLoading(false);
+    // Calculate total price whenever cart data changes
+    const total = cartData.reduce((sum, item) => sum + (item.price || 0), 0);
+    setTotalPrice(total);
+  }, [setLoading, cartData]);
 
+  const handleBooking = async () => {
+    try {
+      const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+      if (!userInfo) {
+        toast.error("Please login to book excursions");
+        history.push("/login");
+        return;
+      }
 
-	const{suggest,setSuggest} =useSuggest()
+      const bookingPayload = {
+        userId: userInfo.userId,
+        totalPrice: totalPrice,
+        isCompleted: false,
+        paymentStatus: "Pending",
+        excursionIds: cartData.map((item) => item.id),
+        isCancelled: false,
+        userEmail: userInfo.email,
+        userName: userInfo.name,
+      };
 
+      const response = await fetch(`${BaseAPIURL}booking/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("wat_token")}`,
+        },
+        body: JSON.stringify(bookingPayload),
+      });
 
+      const data = await response.json();
 
-  useEffect(()=>{
-    setCartCount(cartData?.length)
-      },[cartData])
-
-
-  const handleRemove=(item,id)=>{
-      console.log(item);
-      setCartData((current) =>
-      current.filter((cart) => cart.id !== item.id))
-  }
-
-
-  // useEffect(() => {
-  //   fetch(`${BaseAPIURL}package`, {
-  //     method: 'GET', // or 'PUT'
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       // Authorization: `Bearer ${userDetails.access_token}`,
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setTourPackages(data.data)
-  //       setLoading(false)
-  //     })
-  // }, [])
-  useEffect(()=>{
-    
-    setLoading(false)
-
-  },[setLoading])
+      if (response.ok) {
+        toast.success("Booking successful!");
+        // Clear cart after successful booking
+        cartData.forEach((item) => removeFromCart(item));
+        history.push("/user-profile");
+      } else {
+        toast.error(data.message || "Booking failed");
+      }
+    } catch (error) {
+      console.error("Booking error:", error);
+      toast.error("Failed to process booking");
+    }
+  };
 
   if (loading) {
-    return <Loader />
-  } else {
-    return (
-      
-      <div className='tour-list-area pd-top-120 viaje-go-top'>
-        <div className='container'>
-          <div className='row'>
-            <div className='col-xl-12 col-lg-12 order-lg-12'>
-              <div className='tour-list-area'>
-              {cartData.length === 0? <h3  style={{textAlign:"center"}}>Your cart is empty</h3>: null}
+    return <Loader />;
+  }
 
-                {cartData?.map((item) => {
-                  return (
-                    <div
-                      className='single-destinations-list style-three'
-                      key={item._id}
-                    >
-                      <div className='thumb'>
-                        <img src={IMG_URL + item?.coverImageUrl.replace("/home/images/", "")} alt='list' />
-                      </div>
-                      <div className='details'>
-                        <div className='tp-review-meta'>
-                          <Stars rating={6} />
-                          {/* <i className='ic-yellow fa fa-star' />
-                          <i className='ic-yellow fa fa-star' />
-                          <i className='ic-yellow fa fa-star' />
-                          <i className='ic-yellow fa fa-star' />
-                          <i className='fa fa-star' /> */}
-                          <span>{Number(5).toFixed(1)}</span>
-                        </div>
-                        <p className='location'>
-                          <img
-                            src={publicUrl + 'assets/img/icons/1.png'}
-                            alt='map'
-                          />
-                          {item?.location}
-                        </p>
-                        <h4 className='title'>
-                          <Link
-                            to={{
-                              pathname: `/tour-details/${item.id}`,
-                              state: item,
-                            }}
-                          >
-                            {item?.name}
-                          </Link>
-                        </h4>
-                        <p className='content'>{item?.description}</p>
-                        <div className='list-price-meta'>
-                          <ul className='tp-list-meta d-inline-block'>
-                            <li>
-                              <i className='fa fa-calendar-o' />{' '}
-                             {"On Request"}
-                            </li>
-                            <li>
-                              <i className='fa fa-clock-o' /> {item?.duration}{' '}
-                             {item?.duration > 1 ? 'days' : 'day'}
-                            </li>
-                            <li>
-                              <i className='fa fa-star' />
-                              {Number(5).toFixed(1)}
-                            </li>
-                          </ul>
-                          <div className='tp-price-meta d-inline-block'>
-                            <p>Price</p>
-                            <h2>
-                              {item?.price} <span>{item.currency}</span>
-                            </h2>
-                          </div>
-                          
-                        </div>
-                        <div className='tp-price-meta' style={{textAlign:'right'}}>
-          <button className='btn btn-danger' onClick={()=>handleRemove(item)} style={{position:"right"}}>Remove from cart </button>
-                            
-                          </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            
+  return (
+    <div className="tour-list-area pd-top-120 viaje-go-top">
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="container">
+        <div className="row">
+          <div className="col-xl-12 col-lg-12 order-lg-12">
+            <div className="tour-list-area">
+              {cartData.length === 0 ? (
+                <h3 style={{ textAlign: "center" }}>Your cart is empty</h3>
+              ) : null}
+
+              {cartData?.map((item) => {
+                return (
+                  <ExcursionItem
+                    key={item.id}
+                    excursion={item}
+                    onSelect={handleRemove}
+                    isCart={true}
+                  />
+                );
+              })}
             </div>
           </div>
-          <Row
+        </div>
+        <Row
           className="mt-5"
           style={{
             display: "flex",
-            justifyContent: "right",
+            justifyContent: "space-between",
             paddingRight: "20px",
-            marginTop : "200px",
+            marginTop: "200px",
           }}
-          >
-          {/* <button className='btn btn-secondary' hidden={cartData.length == 0? true:false}>Cancel </button> */}
-
-          {/* <button className='btn btn-primary' hidden={cartData.length == 0? true:false}>Book </button> */}
-
-          </Row>
-        </div>
+        >
+          {cartData.length > 0 && (
+            <>
+              <div style={{ fontSize: "24px", fontWeight: "bold" }}>
+                Total: ${totalPrice}
+              </div>
+              <button className="btn btn-yellow" onClick={handleBooking}>
+                Book Now
+              </button>
+            </>
+          )}
+        </Row>
       </div>
-    )
-  }
-}
+    </div>
+  );
+};
 
-export default Cart
-
+export default Cart;

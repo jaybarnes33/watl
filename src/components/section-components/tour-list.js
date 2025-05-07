@@ -1,334 +1,91 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import parse from "html-react-parser";
+import ExcursionItem from "./ExcursionItem";
 
 class TourList extends Component {
   render() {
-    let publicUrl = process.env.PUBLIC_URL + "/";
-    let imagealt = "image";
+    // Sample data - replace this with your actual data source
+    const excursions = [
+      {
+        id: 1,
+        image: "assets/img/destination-list/16.png",
+        rating: 4.0,
+        location: "Dubai",
+        title: "Dubai City",
+        description:
+          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat",
+        date: "8oct",
+        duration: "4 days",
+        price: 620,
+      },
+      {
+        id: 2,
+        image: "assets/img/destination-list/11.png",
+        rating: 4.0,
+        location: "France",
+        title: "Eiffel Tower",
+        description:
+          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat",
+        date: "8oct",
+        duration: "4 days",
+        price: 620,
+      },
+      {
+        id: 3,
+        image: "assets/img/destination-list/12.png",
+        rating: 4.0,
+        location: "Italy",
+        title: "Colosseum, Rome",
+        description:
+          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat",
+        date: "8oct",
+        duration: "4 days",
+        price: 620,
+      },
+      {
+        id: 4,
+        image: "assets/img/destination-list/5.png",
+        rating: 4.0,
+        location: "Indonesia",
+        title: "Bali Province",
+        description:
+          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat",
+        date: "8oct",
+        duration: "4 days",
+        price: 620,
+      },
+      {
+        id: 5,
+        image: "assets/img/destination-list/7.png",
+        rating: 4.0,
+        location: "Spain",
+        title: "Barcelona city beach",
+        description:
+          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat",
+        date: "8oct",
+        duration: "4 days",
+        price: 620,
+      },
+      {
+        id: 6,
+        image: "assets/img/destination-list/9.png",
+        rating: 4.0,
+        location: "Maldives",
+        title: "Hurawalhi Island",
+        description:
+          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat",
+        date: "8oct",
+        duration: "4 days",
+        price: 620,
+      },
+    ];
 
     return (
       <div className="tour-list-area pd-top-120 viaje-go-top">
         <div className="container">
           <div className="row">
-            <div className="col-lg-6">
-              <div className="single-destinations-list style-four">
-                <div
-                  className="blur-thumb"
-                  style={{
-                    backgroundImage:
-                      "url(" +
-                      publicUrl +
-                      "assets/img/destination-list/16.png)",
-                  }}
-                />
-                <div className="details">
-                  <div className="tp-review-meta">
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="fa fa-star" />
-                    <span>4.0</span>
-                  </div>
-                  <p className="location">
-                    <img src={publicUrl + "assets/img/icons/1.png"} alt="map" />
-                    Dubai
-                  </p>
-                  <h4 className="title">
-                    <Link to="/tour-details">Dubai City</Link>
-                  </h4>
-                  <p className="content">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                    diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat
-                  </p>
-                  <div className="list-price-meta">
-                    <ul className="tp-list-meta d-inline-block">
-                      <li>
-                        <i className="fa fa-calendar-o" /> 8oct
-                      </li>
-                      <li>
-                        <i className="fa fa-clock-o" /> 4 days
-                      </li>
-                      <li>
-                        <i className="fa fa-star" /> 4.3
-                      </li>
-                    </ul>
-                    <div className="tp-price-meta d-inline-block">
-                      <p>Price</p>
-                      <h2>
-                        620 <span>$</span>
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="single-destinations-list style-four">
-                <div
-                  className="blur-thumb"
-                  style={{
-                    backgroundImage:
-                      "url(" +
-                      publicUrl +
-                      "assets/img/destination-list/11.png)",
-                  }}
-                />
-                <div className="details">
-                  <div className="tp-review-meta">
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="fa fa-star" />
-                    <span>4.0</span>
-                  </div>
-                  <p className="location">
-                    <img src={publicUrl + "assets/img/icons/1.png"} alt="map" />
-                    France
-                  </p>
-                  <h4 className="title">
-                    <Link to="/tour-details">Eiffel Tower</Link>
-                  </h4>
-                  <p className="content">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                    diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat
-                  </p>
-                  <div className="list-price-meta">
-                    <ul className="tp-list-meta d-inline-block">
-                      <li>
-                        <i className="fa fa-calendar-o" /> 8oct
-                      </li>
-                      <li>
-                        <i className="fa fa-clock-o" /> 4 days
-                      </li>
-                      <li>
-                        <i className="fa fa-star" /> 4.3
-                      </li>
-                    </ul>
-                    <div className="tp-price-meta d-inline-block">
-                      <p>Price</p>
-                      <h2>
-                        620 <span>$</span>
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="single-destinations-list style-four">
-                <div
-                  className="blur-thumb"
-                  style={{
-                    backgroundImage:
-                      "url(" +
-                      publicUrl +
-                      "assets/img/destination-list/12.png)",
-                  }}
-                />
-                <div className="details">
-                  <div className="tp-review-meta">
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="fa fa-star" />
-                    <span>4.0</span>
-                  </div>
-                  <p className="location">
-                    <img src={publicUrl + "assets/img/icons/1.png"} alt="map" />
-                    Italy
-                  </p>
-                  <h4 className="title">
-                    <Link to="/tour-details">Colosseum, Rome</Link>
-                  </h4>
-                  <p className="content">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                    diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat
-                  </p>
-                  <div className="list-price-meta">
-                    <ul className="tp-list-meta d-inline-block">
-                      <li>
-                        <i className="fa fa-calendar-o" /> 8oct
-                      </li>
-                      <li>
-                        <i className="fa fa-clock-o" /> 4 days
-                      </li>
-                      <li>
-                        <i className="fa fa-star" /> 4.3
-                      </li>
-                    </ul>
-                    <div className="tp-price-meta d-inline-block">
-                      <p>Price</p>
-                      <h2>
-                        620 <span>$</span>
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="single-destinations-list style-four">
-                <div
-                  className="blur-thumb"
-                  style={{
-                    backgroundImage:
-                      "url(" + publicUrl + "assets/img/destination-list/5.png)",
-                  }}
-                />
-                <div className="details">
-                  <div className="tp-review-meta">
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="fa fa-star" />
-                    <span>4.0</span>
-                  </div>
-                  <p className="location">
-                    <img src={publicUrl + "assets/img/icons/1.png"} alt="map" />
-                    Indonesia
-                  </p>
-                  <h4 className="title">
-                    <Link to="/tour-details">Bali Province</Link>
-                  </h4>
-                  <p className="content">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                    diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat
-                  </p>
-                  <div className="list-price-meta">
-                    <ul className="tp-list-meta d-inline-block">
-                      <li>
-                        <i className="fa fa-calendar-o" /> 8oct
-                      </li>
-                      <li>
-                        <i className="fa fa-clock-o" /> 4 days
-                      </li>
-                      <li>
-                        <i className="fa fa-star" /> 4.3
-                      </li>
-                    </ul>
-                    <div className="tp-price-meta d-inline-block">
-                      <p>Price</p>
-                      <h2>
-                        620 <span>$</span>
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="single-destinations-list style-four">
-                <div
-                  className="blur-thumb"
-                  style={{
-                    backgroundImage:
-                      "url(" + publicUrl + "assets/img/destination-list/7.png)",
-                  }}
-                />
-                <div className="details">
-                  <div className="tp-review-meta">
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="fa fa-star" />
-                    <span>4.0</span>
-                  </div>
-                  <p className="location">
-                    <img src={publicUrl + "assets/img/icons/1.png"} alt="map" />
-                    Spain
-                  </p>
-                  <h4 className="title">
-                    <Link to="/tour-details">Barcelona city beach</Link>
-                  </h4>
-                  <p className="content">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                    diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat
-                  </p>
-                  <div className="list-price-meta">
-                    <ul className="tp-list-meta d-inline-block">
-                      <li>
-                        <i className="fa fa-calendar-o" /> 8oct
-                      </li>
-                      <li>
-                        <i className="fa fa-clock-o" /> 4 days
-                      </li>
-                      <li>
-                        <i className="fa fa-star" /> 4.3
-                      </li>
-                    </ul>
-                    <div className="tp-price-meta d-inline-block">
-                      <p>Price</p>
-                      <h2>
-                        620 <span>$</span>
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="single-destinations-list style-four">
-                <div
-                  className="blur-thumb"
-                  style={{
-                    backgroundImage:
-                      "url(" + publicUrl + "assets/img/destination-list/9.png)",
-                  }}
-                />
-                <div className="details">
-                  <div className="tp-review-meta">
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="ic-yellow fa fa-star" />
-                    <i className="fa fa-star" />
-                    <span>4.0</span>
-                  </div>
-                  <p className="location">
-                    <img src={publicUrl + "assets/img/icons/1.png"} alt="map" />
-                    Maldives
-                  </p>
-                  <h4 className="title">
-                    <Link to="/tour-details">Hurawalhi Island</Link>
-                  </h4>
-                  <p className="content">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                    diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat
-                  </p>
-                  <div className="list-price-meta">
-                    <ul className="tp-list-meta d-inline-block">
-                      <li>
-                        <i className="fa fa-calendar-o" /> 8oct
-                      </li>
-                      <li>
-                        <i className="fa fa-clock-o" /> 4 days
-                      </li>
-                      <li>
-                        <i className="fa fa-star" /> 4.3
-                      </li>
-                    </ul>
-                    <div className="tp-price-meta d-inline-block">
-                      <p>Price</p>
-                      <h2>
-                        620 <span>$</span>
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {excursions.map((excursion) => (
+              <ExcursionItem key={excursion.id} excursion={excursion} />
+            ))}
             <div className="col-lg-12 text-md-center text-left">
               <div className="tp-pagination text-md-center text-left d-inline-block mt-4">
                 <ul>

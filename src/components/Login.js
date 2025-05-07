@@ -17,34 +17,54 @@ const Login = () => {
   const [isValid, setIsValid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
+  const fetchUserData = async (token) => {
+    try {
+      const response = await fetch(BaseAPIURL + "account", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (data.name) {
+        sessionStorage.setItem("userInfo", JSON.stringify(data));
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const handleLogin = async () => {
     setIsLoading(true);
     let path = `/`;
 
-    fetch(BaseAPIURL + "account/sign-in", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(loginDetails),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          sessionStorage.setItem("wat_token", data.token);
-          history.push(path);
-        } else {
-          console.log(data);
-          setTimeout(() => {
-            toast.error(data.error);
-          }, 1000);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsValid(false);
-      })
-      .finally(() => setIsLoading(false));
+    try {
+      const response = await fetch(BaseAPIURL + "account/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginDetails),
+      });
+
+      const data = await response.json();
+
+      if (data.accessToken) {
+        sessionStorage.setItem("wat_token", data.accessToken);
+        await fetchUserData(data.accessToken);
+        history.push(path);
+        toast.success("Login successful!");
+      } else {
+        toast.error(data.error || "Login failed");
+      }
+    } catch (err) {
+      console.log(err);
+      setIsValid(false);
+      toast.error("Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isLoading) {
@@ -76,7 +96,7 @@ const Login = () => {
                   <span className="single-input-title">Email</span>
                   <input
                     type="email"
-                    placeholder="Email Address"
+                    placeholder="Enter email"
                     value={loginDetails.email}
                     onChange={(e) =>
                       setLoginDetails({
@@ -93,7 +113,6 @@ const Login = () => {
                   <input
                     type="password"
                     placeholder="Password"
-                    required
                     value={loginDetails.password}
                     onChange={(e) =>
                       setLoginDetails({
@@ -126,7 +145,7 @@ const Login = () => {
                 <div style={{ textAlign: "center", cursor: "pointer" }}>
                   <Link to="/signup">
                     <h6 style={{ marginBottom: 30 }}>
-                      New user? Create an account
+                      Don't have an account? Signup
                     </h6>
                   </Link>
 

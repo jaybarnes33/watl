@@ -1,393 +1,188 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import parse from 'html-react-parser'
+import React, { useState, useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
+import parse from "html-react-parser";
+import { BaseAPIURL } from "../../API/base";
 
 const UserProfile = ({ userInfo }) => {
-  console.log(userInfo)
-  let publicUrl = process.env.PUBLIC_URL + '/'
+  const history = useHistory();
+  const [activeTab, setActiveTab] = useState("profile");
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const fetchBookings = async () => {
+    setLoading(true);
+    try {
+      const token = sessionStorage.getItem("wat_token");
+      const response = await fetch(
+        `${BaseAPIURL}booking/user-booking?name=${userInfo.name}&pageIndex=${currentPage}&pageSize=${pageSize}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.data) {
+        setBookings(data.data.results);
+      }
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "bookings") {
+      fetchBookings();
+    }
+  }, [activeTab, currentPage]);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("wat_token");
+    sessionStorage.removeItem("userInfo");
+    history.push("/");
+  };
+
+  const renderProfileTab = () => (
+    <div className="profile-form">
+      <div className="row">
+        <div className="col-lg-6">
+          <div className="form-group">
+            <label>Name</label>
+            <input
+              type="text"
+              className="form-control"
+              value={userInfo.name}
+              readOnly
+            />
+          </div>
+        </div>
+        <div className="col-lg-6">
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              className="form-control"
+              value={userInfo.email}
+              readOnly
+            />
+          </div>
+        </div>
+      </div>
+      <div className="row mt-4">
+        <div className="col-12">
+          <button
+            className="btn btn-danger"
+            onClick={handleLogout}
+            style={{ marginTop: "20px" }}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderBookingsTab = () => (
+    <div className="bookings-list">
+      {loading ? (
+        <div className="text-center">Loading...</div>
+      ) : bookings.length > 0 ? (
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Excursions</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Payment Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bookings.map((booking) => (
+                <tr key={booking.id}>
+                  <td>{booking.generatedBookingId}</td>
+                  <td>{booking.excursionNames.join(", ")}</td>
+                  <td>${booking.totalPrice}</td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        booking.isCompleted
+                          ? "bg-success"
+                          : booking.isCancelled
+                          ? "bg-danger"
+                          : "bg-warning"
+                      }`}
+                    >
+                      {booking.isCompleted
+                        ? "Completed"
+                        : booking.isCancelled
+                        ? "Cancelled"
+                        : "Pending"}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        booking.paymentStatus === "Paid"
+                          ? "bg-success"
+                          : "bg-warning"
+                      }`}
+                    >
+                      {booking.paymentStatus}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="text-center">No bookings found</div>
+      )}
+    </div>
+  );
 
   return (
-    <div className='user-profile-area pd-top-120'>
-      <div className='container'>
-        <div className='row'>
-          <div className='col-xl-10 col-lg-12'>
-            <div className='row'>
-              {/* Profile Settings */}
-              {/* <div className='col-lg-4'>
-                <ul className='nav nav-tabs tp-tabs style-two'>
-                  <li className='nav-item'>
-                    <a
-                      className='nav-link active'
-                      data-toggle='tab'
-                      href='#tabs_1'
-                    >
-                      <i className='fa fa-user' />
-                      Profile
-                    </a>
-                  </li>
-                  <li className='nav-item'>
-                    <a className='nav-link' data-toggle='tab' href='#tabs_2'>
-                      <i className='fa fa-check-square-o' />
-                      Verifications
-                    </a>
-                  </li>
-                  <li className='nav-item'>
-                    <a className='nav-link' data-toggle='tab' href='#tabs_3'>
-                      <i className='fa fa-cog' />
-                      Settings
-                    </a>
-                  </li>
-                  <li className='nav-item'>
-                    <a className='nav-link' data-toggle='tab' href='#tabs_4'>
-                      <i className='fa fa-recycle' />
-                      Recently Viewed
-                    </a>
-                  </li>
-                  <li className='nav-item'>
-                    <a className='nav-link' data-toggle='tab' href='#tabs_5'>
-                      <i className='fa fa-credit-card-alt' />
-                      Payment Methods
-                    </a>
-                  </li>
-                  <li className='nav-item'>
-                    <a className='nav-link' data-toggle='tab' href='#tabs_6'>
-                      <i className='fa fa-star-o' />
-                      Reviews
-                    </a>
-                  </li>
-                  <li
-                    className='text-center'
-                    onClick={() => sessionStorage.removeItem('wat_token')}
-                  >
-                    <a className='btn btn-yellow' href='#'>
-                      <i className='fa fa-sign-in' aria-hidden='true' />{' '}
-                      <span>Log Out</span>
-                    </a>
-                  </li>
-                </ul>
-              </div> */}
-              <div className='col-xl-7 col-lg-12 offset-xl-1'>
-                <div className='tab-content user-tab-content'>
-                  <div className='tab-pane fade show active' id='tabs_1'>
-                    <div className='user-details'>
-                      <h3 className='user-details-title'>Profile</h3>
-                      <div className='tp-img-upload'>
-                        {/* <div className='tp-avatar-preview'>
-                          <div
-                            id='tp_imagePreview'
-                            style={{
-                              backgroundImage:
-                                'url(' + publicUrl + 'assets/img/team/1.png)',
-                            }}
-                          ></div>
-                        </div> */}
-                        {/* <div className='tp-avatar-edit'>
-                          <input
-                            type='file'
-                            id='tp_imageUpload'
-                            accept='.png, .jpg, .jpeg'
-                          />
-                          <label
-                            className='btn btn-transparent'
-                            htmlFor='tp_imageUpload'
-                          >
-                            <i className='fa fa-picture-o' />
-                            Change Photo
-                          </label>
-                          <h4 className='name'>
-                            {userInfo?.firstName} {userInfo?.lastName}{' '}
-                            {userInfo?.name}
-                          </h4>
-                        </div> */}
-                      </div>
-                      <form className='tp-form-wrap'>
-                        <div className='row'>
-                          <div className='col-md-6'>
-                            <label className='single-input-wrap style-two'>
-                              <span className='single-input-title'>
-                                First Name
-                              </span>
-                              <input
-                                type='text'
-                                name='first-name'
-                                value={userInfo?.firstName}
-                                onChange={() => console.log('changing')}
-                              />
-                            </label>
-                          </div>
-                          <div className='col-md-6'>
-                            <label className='single-input-wrap style-two'>
-                              <span className='single-input-title'>
-                                Last Number
-                              </span>
-                              <input
-                                type='text'
-                                name='last-name'
-                                value={userInfo?.lastName}
-                                disabled
-                                onChange={() => console.log('changing')}
-                              />
-                            </label>
-                          </div>
-                          {/* <div className='col-lg-12'>
-                            <label className='single-input-wrap style-two'>
-                              <span className='single-input-title'>
-                                Tell us about yourself.
-                              </span>
-                              <textarea defaultValue={''} name='message' />
-                            </label>
-                          </div> */}
-                          {/* <div className='col-md-7'>
-                            <label className='single-input-wrap style-two'>
-                              <span className='single-input-title'>
-                                Country
-                              </span>
-                              <input type='text' name='country' />
-                            </label>
-                          </div> */}
-                          <div className='col-md-6'>
-                            <label className='single-input-wrap style-two'>
-                              <span className='single-input-title'>
-                                Email Address
-                              </span>
-                              <input
-                                type='text'
-                                name='email'
-                                value={userInfo?.username}
-                                disabled
-                                onChange={() => console.log('changing')}
-                              />
-                            </label>
-                          </div>
-                          {/* <div className='col-md-6'>
-                            <label className='single-input-wrap style-two'>
-                              <span className='single-input-title'>
-                                Other Phone
-                              </span>
-                              <input
-                                type='text'
-                                placeholder={+880}
-                                name='phone'
-                              />
-                            </label>
-                          </div> */}
-                          {/* <div className='col-12'>
-                            <input
-                              className='btn btn-yellow mt-3 text-center'
-                              type='submit'
-                            />
-                          </div> */}
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                  <div className='tab-pane fade' id='tabs_2'>
-                    <div className='user-verification'>
-                      <div className='row'>
-                        <div className='col-lg-7'>
-                          <h3 className='user-details-title'>Verification</h3>
-                          <div className='notice'>
-                            <i className='fa fa-exclamation-triangle' /> Your
-                            email hasn't been verified.
-                          </div>
-                          <span>imshuvo97@gmail.com</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='tab-pane fade' id='tabs_3'>
-                    <div className='user-settings'>
-                      <h3 className='user-details-title'>Settings</h3>
-                      <div className='row'>
-                        <div className='col-lg-7'>
-                          <label className='single-input-wrap style-two'>
-                            <span className='single-input-title mb-3'>
-                              Change your password
-                            </span>
-                            <input type='text' placeholder='Old password' />
-                          </label>
-                        </div>
-                        <div className='col-lg-7'>
-                          <label className='single-input-wrap style-two'>
-                            <input type='text' placeholder='New password' />
-                          </label>
-                        </div>
-                        <div className='col-lg-7'>
-                          <label className='single-input-wrap style-two'>
-                            <input type='text' placeholder='New password' />
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='tab-pane fade' id='tabs_4'>
-                    <div className='user-recent-view'>
-                      <h3 className='user-details-title'>Recently Viewed</h3>
-                      <div className='row'>
-                        <div className='col-sm-6'>
-                          <div className='single-destinations-list style-two'>
-                            <div className='thumb'>
-                              <img
-                                src={
-                                  publicUrl +
-                                  'assets/img/destination-list/4.png'
-                                }
-                                alt='list'
-                              />
-                            </div>
-                            <div className='details'>
-                              <p className='location'>
-                                <img
-                                  src={publicUrl + 'assets/img/icons/1.png'}
-                                  alt='map'
-                                />
-                                Maldives
-                              </p>
-                              <h4 className='title'>
-                                <a href='#'>Hurawalhi Island</a>
-                              </h4>
-                              <p className='content'>7Days Tour on 2 person</p>
-                              <div className='tp-price-meta'>
-                                <h2>
-                                  620 <small>$</small>
-                                </h2>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-sm-6'>
-                          <div className='single-destinations-list style-two'>
-                            <div className='thumb'>
-                              <img
-                                src={
-                                  publicUrl +
-                                  'assets/img/destination-list/5.png'
-                                }
-                                alt='list'
-                              />
-                            </div>
-                            <div className='details'>
-                              <p className='location'>
-                                <img
-                                  src={publicUrl + 'assets/img/icons/1.png'}
-                                  alt='map'
-                                />
-                                Indonesia
-                              </p>
-                              <h4 className='title'>
-                                <a href='#'>Bali Province</a>
-                              </h4>
-                              <p className='content'>4days 2 person</p>
-                              <div className='tp-price-meta'>
-                                <h2>
-                                  780 <small>$</small>
-                                </h2>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='tab-pane fade' id='tabs_5'>
-                    <div className='user-payment-method'>
-                      <div className='location-review-area'>
-                        <h3 className='user-details-title'>Payment Methods</h3>
-                        <form className='tp-form-wrap bg-gray tp-form-wrap-one'>
-                          <div className='row'>
-                            <div className='col-lg-7'>
-                              <label className='single-input-wrap'>
-                                <span className='single-input-title'>
-                                  Credit card number
-                                </span>
-                                <input type='text' />
-                              </label>
-                              <label className='single-input-wrap'>
-                                <span className='single-input-title'>
-                                  Card holder name
-                                </span>
-                                <input type='text' />
-                              </label>
-                              <label className='single-input-wrap'>
-                                <span className='single-input-title'>
-                                  Expiry date (Example: 01/17)
-                                </span>
-                                <input type='text' />
-                              </label>
-                              <label className='single-input-wrap'>
-                                <span className='single-input-title'>
-                                  Issuing bank
-                                </span>
-                                <input type='text' />
-                              </label>
-                            </div>
-                            <div className='col-lg-5'>
-                              <div className='user-payment-card'>
-                                <img
-                                  src={publicUrl + 'assets/img/others/16.png'}
-                                  alt='img'
-                                />
-                                <span>Available payment method:</span>
-                                <div className='payment-card'>
-                                  <i className='fa fa-cc-paypal' />
-                                  <i className='fa fa-cc-visa' />
-                                  <i className='fa fa-cc-mastercard' />
-                                  <i className='fa fa-credit-card-alt' />
-                                </div>
-                                <a className='btn btn-transparent' href='#'>
-                                  Cancel
-                                </a>
-                                <a className='btn btn-yellow' href='#'>
-                                  Save
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='tab-pane fade' id='tabs_6'>
-                    <div className='user-tour-details'>
-                      <h3 className='user-details-title'>Reviews</h3>
-                      <span className='user-tour-details-title'>
-                        Reviews About You
-                      </span>
-                      <span>| Reviews By You</span>
-                      <div className='comments-area tour-details-review-area'>
-                        <ul className='comment-list mb-0'>
-                          <li>
-                            <div className='single-comment-wrap'>
-                              <div className='thumb'>
-                                <img
-                                  src={publicUrl + 'assets/img/client/2.png'}
-                                  alt='img'
-                                />
-                              </div>
-                              <div className='content'>
-                                <h4 className='title'>Tyler Bailey</h4>
-                                <span className='date'>13 August 2019</span>
-                                <div className='tp-review-meta'>
-                                  <i className='ic-yellow fa fa-star' />
-                                  <i className='ic-yellow fa fa-star' />
-                                  <i className='ic-yellow fa fa-star' />
-                                  <i className='ic-yellow fa fa-star' />
-                                  <i className='ic-yellow fa fa-star' />
-                                </div>
-                                <p>
-                                  Lorem ipsum dolor sit amet, consetetur
-                                  sadipscing elitr, sed diam nonumy eirmod
-                                  tempor invidunt ut labore et dolore magna
-                                  aliquyam erat, sed diam voluptua. At vero eos
-                                  et accusam et justo duo dolores et ea rebum.
-                                  Stet clita kasd gubergren, no sea takimata
-                                </p>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
+    <div className="user-profile-area pd-top-120">
+      <div className="container">
+        <div className="row">
+          <div className="col-xl-10 col-lg-12">
+            <div className="row">
+              <div className="col-xl-7 col-lg-12 offset-xl-1">
+                <div className="tabs-container">
+                  <ul className="nav nav-tabs" role="tablist">
+                    <li className="nav-item">
+                      <button
+                        className={`nav-link ${
+                          activeTab === "profile" ? "active" : ""
+                        }`}
+                        onClick={() => setActiveTab("profile")}
+                      >
+                        Profile
+                      </button>
+                    </li>
+                    <li className="nav-item">
+                      <button
+                        className={`nav-link ${
+                          activeTab === "bookings" ? "active" : ""
+                        }`}
+                        onClick={() => setActiveTab("bookings")}
+                      >
+                        My Bookings
+                      </button>
+                    </li>
+                  </ul>
+                  <div className="tab-content mt-4">
+                    {activeTab === "profile"
+                      ? renderProfileTab()
+                      : renderBookingsTab()}
                   </div>
                 </div>
               </div>
@@ -396,7 +191,7 @@ const UserProfile = ({ userInfo }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserProfile
+export default UserProfile;

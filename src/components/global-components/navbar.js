@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
-import useCartCounter from "../useCartCounter";
+import useCart from "../useCart";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { cartCount, setCartcount } = useCartCounter(0);
-  console.log(cartCount);
+
+  const { itemCount } = useCart();
 
   useLayoutEffect(() => {
     let token = sessionStorage.getItem("wat_token");
@@ -73,7 +73,7 @@ const Navbar = () => {
                   <span
                     style={{ textDecoration: "underline", color: "orange" }}
                   >
-                    {cartCount}
+                    {itemCount}
                   </span>
 
                   <i className="fa fa-shopping-cart" />
@@ -232,7 +232,7 @@ const Navbar = () => {
               <Link to={"/cart"}>
                 <i className="ti-shopping-cart" />
                 <span
-                  title={`${cartCount} items in your cart`}
+                  title={`${itemCount} items in your cart`}
                   style={{
                     textDecoration: "underline",
                     color: "white",
@@ -243,7 +243,7 @@ const Navbar = () => {
                     padding: 10,
                   }}
                 >
-                  {cartCount}
+                  {itemCount}
                 </span>
               </Link>
             </li>
