@@ -7,6 +7,7 @@ import axios from "axios";
 import { BaseAPIURL } from "../API/base";
 import { Link } from "react-router-dom";
 import Loader from "./global-components/loader";
+import toast from "react-hot-toast";
 
 const FISHING_EXCURSIONS = [
   {
@@ -451,14 +452,23 @@ const SpecialExcursion = () => {
   const [excursions, setExcursions] = useState(null);
 
   const fetchStudentsExcursions = async () => {
-    const { data } = await axios.get(BaseAPIURL + "excursions/specialinterest");
+    try {
+      setLoading(true);
+      const { data } = await axios.get(
+        BaseAPIURL + "excursions/specialinterest"
+      );
 
-    return data.data.results.map((item) => ({
-      countryName: item.countryName,
-      title: "In " + item.countryName,
-      description: item.description,
-      ...item,
-    }));
+      return data.data.results.map((item) => ({
+        countryName: item.countryName,
+        title: "In " + item.countryName,
+        description: item.description,
+        ...item,
+      }));
+    } catch (error) {
+      toast.error("Error fetching excursions");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getExcursionsByType = (type) => {
@@ -536,6 +546,7 @@ const SpecialExcursion = () => {
       </div>
     );
   };
+
   const renderExcursionContent = () => {
     if (!excursions) return null;
 
@@ -591,7 +602,9 @@ const SpecialExcursion = () => {
             {id.toLowerCase() === "students" && (
               <Link
                 className="btn btn-warning"
-                to={`/destination-details/${item.excursions[0].destinationId}`}
+                to={`/special-excursion-details/${encodeURIComponent(
+                  JSON.stringify(item)
+                )}`}
               >
                 Learn more about {item.countryName} &rarr;
               </Link>

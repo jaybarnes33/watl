@@ -35,6 +35,7 @@ import CartCustom from "./components/cart-custom";
 import SpecialExursions from "./components/special-excursions";
 import SpecialExcursion from "./components/special-excursion";
 import { Toaster } from "react-hot-toast";
+import SpecialExcursionDetails from "./components/special-excursion-details";
 
 class Root extends Component {
   render() {
@@ -90,7 +91,10 @@ class Root extends Component {
                       path="/special-excursions/"
                       component={SpecialExursions}
                     />
-
+                    <Route
+                      path="/special-excursion-details"
+                      component={SpecialExcursionDetails}
+                    />
                     {/* <Route patch= */}
                     {/* <Route path='/tour-details/:id' children={<TourDetails />} /> */}
                   </Switch>

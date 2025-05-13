@@ -13,18 +13,10 @@ const Cart = () => {
   const { cartData, removeFromCart } = useCart();
   const { loading, setLoading } = useLoader();
   const history = useHistory();
-  const [totalPrice, setTotalPrice] = useState(0);
 
   const handleRemove = (item) => {
     removeFromCart(item);
   };
-
-  useEffect(() => {
-    setLoading(false);
-    // Calculate total price whenever cart data changes
-    const total = cartData.reduce((sum, item) => sum + (item.price || 0), 0);
-    setTotalPrice(total);
-  }, [setLoading, cartData]);
 
   const handleBooking = async () => {
     try {
@@ -37,7 +29,7 @@ const Cart = () => {
 
       const bookingPayload = {
         userId: userInfo.userId,
-        totalPrice: totalPrice,
+        totalPrice: 0,
         isCompleted: false,
         paymentStatus: "Pending",
         excursionIds: cartData.map((item) => item.id),
@@ -98,26 +90,6 @@ const Cart = () => {
             </div>
           </div>
         </div>
-        <Row
-          className="mt-5"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            paddingRight: "20px",
-            marginTop: "200px",
-          }}
-        >
-          {cartData.length > 0 && (
-            <>
-              <div style={{ fontSize: "24px", fontWeight: "bold" }}>
-                Total: ${totalPrice}
-              </div>
-              <button className="btn btn-yellow" onClick={handleBooking}>
-                Book Now
-              </button>
-            </>
-          )}
-        </Row>
       </div>
     </div>
   );

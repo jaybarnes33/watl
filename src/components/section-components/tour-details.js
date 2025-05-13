@@ -279,13 +279,6 @@ const TourDetails = () => {
                       <p className="book-list-content">
                         Just booked! Get your spot before it's too late.
                       </p>
-                      <div className="tp-price-meta">
-                        <p>Price</p>
-                        <h2>
-                          {tourPackage?.price}{" "}
-                          <small>{tourPackage?.currency}</small>
-                        </h2>
-                      </div>
                     </div>
                     <ul className="tp-list-meta border-tp-solid">
                       <li className="ml-0">

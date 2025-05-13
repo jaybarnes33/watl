@@ -235,20 +235,6 @@ const DestinatioDetails = () => {
                                 {item?.name}
                               </Link>
                             </ul>
-                            <div className="tp-price-meta tp-price-meta-cl">
-                              <p>Price</p>
-                              {item?.price > 0 ? (
-                                <h2>
-                                  {item.currency} {item.price}
-                                </h2>
-                              ) : (
-                                <span className="text-danger">On Request</span>
-                              )}
-                              <del>
-                                {/* {item?.price + 20} */}
-                                <span>$</span>
-                              </del>
-                            </div>
                           </div>
                         </div>
                       </div>
